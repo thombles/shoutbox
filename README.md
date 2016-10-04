@@ -10,7 +10,8 @@ all works on PHP 7.
 
 ## How to
 
-1. Create database and run `database/create.sql` to setup tables
+1. Create database and run `database/create.sql` to setup tables. For
+example, `mysql -u username -p database_name < database/create.sql`
 2. Copy/move `server/config.example.php` to `server/config.php` and
 enter your database config
 3. Run, e.g. `php -S 0.0.0.0:8080`, or copy into an Apache
