@@ -21,7 +21,7 @@ class Database
         $db_password = getConfig('db_password');
 
         if (!$this->db)
-            $this->db = new PDO("mysql:host=$db_hostname;dbname=$db_database", $db_username, $db_password);
+	   $this->db = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
         return $this->db;
     }
 }

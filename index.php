@@ -9,7 +9,7 @@ $app = new \Slim\Slim(array(
 ));
 
 $app->post('/post', function () {
-    postMessage($_POST['text']);
+    postMessage($_POST['text'], $_POST['poster']);
 });
 
 $app->get('/list', function () use ($app) {
@@ -31,7 +31,9 @@ $app->post('/upload/', function() use ($app) {
     $tmp = $_FILES['file']['tmp_name'];
     $name = $_FILES['file']['name'];
     
-    saveImage($tmp, $name, 340);
+    $poster = "File Upload";
+
+    saveImage($tmp, $name, 1000, $poster);
 });
 
 $app->get('/', function () use ($app) {

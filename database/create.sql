@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS `messages`;
 
 CREATE TABLE `messages` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `poster` text,
   `text` text,
   `time` datetime DEFAULT NULL,
   `ip` varchar(16) DEFAULT NULL,

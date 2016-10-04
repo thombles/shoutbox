@@ -20,40 +20,57 @@
     </head>
     <body>
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">
+	  <div class="row">
+	    <div class="col-md-12">
                     <h2>Shoutbox</h2>
+	    </div>
+	  </div>
+            <div class="row">
+                <div class="col-md-12">
                     <div ng-controller="ShoutboxController">
 
                         <hr>
 
-                        <div class="row">
-                            <form class="form" ng-submit="addMessage()">
+			<form class="form" ng-submit="addMessage()">
+
+			  <div class="row">
+                                <div class="col-md-2">
+				  Nickname
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-nickname form-control" ng-model="messagePoster" placeholder="Anonymous Coward" required>
+                                    </div>
+                                </div>
+				<div class="col-md-2">
+				  <div class="btn btn-primary btn-file">upload<input type="file" ng-file-select="onFileSelect($files)"></div>
+				</div>
+			  </div>
+
+                          <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <input type="text" class="form-message form-control" ng-model="messageText" placeholder="add new message here" required>
                                     </div>
                                 </div>
-                                <div class="form-actions col-md-4">
+                                <div class="form-actions col-md-2">
                                     <input class="btn btn-primary btn-post" type="submit" value="post">
                                 </div>
-                            </form>
-                        </div>
+				<div class="col-md-2">
+                                  <div class="drop-box" ng-file-drop="onFileSelect($files)" ng-show="dropSupported" ng-file-drop-available="dropSupported=true" ng-file-drag-over-class="drop-box-drag">drop files here</div>
+				</div>
+                          </div>
 
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="drop-box" ng-file-drop="onFileSelect($files)" ng-show="dropSupported" ng-file-drop-available="dropSupported=true" ng-file-drag-over-class="drop-box-drag">drop files here</div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="btn btn-primary btn-file">upload ... <input type="file" ng-file-select="onFileSelect($files)"></div>
-                            </div>
-                        </div>
+			</form>
 
                         <hr>
 
                         <div class="messages">
                             <div class="message" ng-repeat="message in messages">
-                                <div class="message-text" ng-bind-html="message.text"></div>
+			        <div class="row">
+			          <div class="message-poster col-md-2" ng-bind-html="message.poster"></div>
+                                  <div class="message-text col-md-8" ng-bind-html="message.text"></div>
+				</div>
                                 <img class="message-img" src="uploads/{{ message.image }}" ng-if="message.image">
                                 <div class="message-time">{{ message.time }}</div>
                             </div>

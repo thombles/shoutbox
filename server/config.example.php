@@ -7,6 +7,6 @@ $conf['db_username'] = 'root';
 $conf['db_password'] = '';
 $conf['db_database'] = 'shoutbox';
 
-$conf['limit'] = 10;
+$conf['limit'] = 200;
 
 ?>

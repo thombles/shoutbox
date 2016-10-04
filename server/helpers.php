@@ -24,4 +24,17 @@ function getConfig($key) {
     return $conf ? $conf[$key] : getenv($key);
 }
 
+function emote($str) {
+	 if (startsWith($str, "/me ")) {
+	    return "<i>" . substr($str, 3) . "</i>";
+	 }
+	 return $str;
+}
+
+function startsWith($haystack, $needle) {
+    // search backwards starting from haystack length characters from the end
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+}
+
+
 ?>

@@ -8,27 +8,36 @@ class Message {
     public $text;
     public $image;
     public $time;
+    public $poster;
 
     function __construct($data) {
         $this->id = (int)$data['id'];
         $this->text = $data['text'];
         $this->image = $data['image'];
         $this->time = $data['time'];
+	$this->poster = htmlentities($data['poster']);
+
+	$this->text = htmlentities($this->text);
+	$this->text = autolink($this->text);
+	$this->text = emote($this->text);
     }
 }
 
-function postMessage($text, $image = null) { 
-    if($text) {
-        $text = autolink($text);
-    }
-
+function postMessage($text, $poster, $image = null) { 
     $ip = $_SERVER['REMOTE_ADDR'];
     $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
     $conn = Database::getFactory()->getConnection();
-    $sql = "INSERT INTO messages (text, image, time, ip, user_agent) VALUES ('$text', '$image', NOW(), '$ip', '$user_agent')";
+    
+    $text = mysqli_real_escape_string($conn, $text);
+    $poster = mysqli_real_escape_string($conn, $poster);
+    $image = mysqli_real_escape_string($conn, $image);
+    $ip = mysqli_real_escape_string($conn, $ip);
+    $user_agent = mysqli_real_escape_string($conn, $user_agent);
+    
+    $sql = "INSERT INTO messages (text, poster, image, time, ip, user_agent) VALUES ('$text', '$poster', '$image', NOW(), '$ip', '$user_agent')";
 
-    if ($conn->exec($sql)) {
+    if (mysqli_query($conn, $sql)) {
         deleteMessages();
     }
 }
@@ -39,7 +48,7 @@ function getMessages() {
 
     $messages = array();
     
-    foreach ($conn->query($sql) as $row) {
+    foreach (mysqli_fetch_all(mysqli_query($conn, $sql), MYSQLI_ASSOC) as $row) {
         $messages[] = new Message($row);
     }
 
@@ -50,7 +59,7 @@ function getLastMessage() {
     $conn = Database::getFactory()->getConnection();
     $sql = "SELECT * FROM messages ORDER BY id DESC LIMIT 1";
 
-    $result = $conn->query($sql)->fetch();
+    $result = mysqli_fetch_assoc(mysqli_query($conn, $sql));
 
     if ($result) {
         return new Message($result);
@@ -66,7 +75,7 @@ function deleteMessages() {
     $conn = Database::getFactory()->getConnection();
     $sql = "SELECT * FROM messages WHERE id NOT IN (SELECT id FROM (SELECT id FROM messages ORDER BY id DESC LIMIT $limit) temp)";
 
-    foreach ($conn->query($sql) as $row) {
+    foreach (mysqli_fetch_all(mysqli_query($conn, $sql), MYSQLI_ASSOC) as $row) {
         $message = new Message($row);
 
         if ($message->image) {
@@ -77,11 +86,11 @@ function deleteMessages() {
             }
         }
 
-        $conn->exec("DELETE FROM messages WHERE id = $message->id");
+        mysqli_query($conn, "DELETE FROM messages WHERE id = $message->id");
     }
 }
 
-function saveImage($tmp, $name, $resizeWidth) {
+function saveImage($tmp, $name, $resizeWidth, $poster) {
     $ext = pathinfo($name, PATHINFO_EXTENSION);
     $filename = uniqid() . '.' . $ext;
     $dest = 'uploads/' . $filename;
@@ -96,6 +105,8 @@ function saveImage($tmp, $name, $resizeWidth) {
     $width  = imagesx($img);  
     $height = imagesy($img);
 
+    if ($resizeWidth > $width) $resizeWidth = $width;
+
     $resizeHeight = $resizeWidth * ($height / $width);
 
     $resized = imagecreatetruecolor($resizeWidth, $resizeHeight);
@@ -108,7 +119,7 @@ function saveImage($tmp, $name, $resizeWidth) {
         imagepng($resized, $dest);
     }
 
-    postMessage(null, $filename);
+    postMessage(null, $poster, $filename);
 }
 
 ?>

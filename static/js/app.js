@@ -21,6 +21,7 @@ var ShoutboxController = ['$scope', '$upload', function($scope, $upload) {
                     return {
                         id: item.id,
                         text: item.text,
+			poster: item.poster,
                         image: item.image,
                         time: moment(item.time).calendar()
                     }
@@ -31,8 +32,11 @@ var ShoutboxController = ['$scope', '$upload', function($scope, $upload) {
 
     $scope.addMessage = function() {
         var data = {
+	    poster: $scope.messagePoster,
             text: $scope.messageText 
         };
+
+	localStorage.setItem("poster", $scope.messagePoster);
 
         $.post('index.php/post', data, function(html) {
             $scope.$apply(function() {
@@ -47,6 +51,7 @@ var ShoutboxController = ['$scope', '$upload', function($scope, $upload) {
 
         for (var i = 0; i < files.length; i++) {
             var file = files[0];
+	    file.poster = $scope.messagePoster;
 
             $scope.upload = $upload.upload({
                 url: 'index.php/upload',
@@ -70,4 +75,6 @@ var ShoutboxController = ['$scope', '$upload', function($scope, $upload) {
             }
         });
     }, 1000);
+
+    $scope.messagePoster = localStorage.getItem("poster");
 }];
